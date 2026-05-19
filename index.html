@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>并购重组税务模拟评估 — 宇守信咨询</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; background:#f0f2f5; color:#2d3436; padding-bottom:60px; }
+.header { background:linear-gradient(135deg,#1a0a2e,#3b1c6e); color:white; padding:32px 20px 24px; text-align:center; }
+.header h1 { font-size:22px; font-weight:700; margin-bottom:6px; }
+.header p { font-size:13px; opacity:0.85; }
+.header .badge { display:inline-block; background:rgba(255,255,255,0.2); border-radius:20px; padding:4px 14px; font-size:11px; margin-top:8px; }
+.tabs { display:flex; background:white; box-shadow:0 1px 4px rgba(0,0,0,0.08); position:sticky; top:0; z-index:10; }
+.tab { flex:1; text-align:center; padding:14px 0; font-size:14px; font-weight:500; color:#888; cursor:pointer; border-bottom:3px solid transparent; transition:all .2s; }
+.tab.active { color:#3b1c6e; border-bottom-color:#3b1c6e; }
+.panel { display:none; padding:16px; }
+.panel.active { display:block; }
+.card { background:white; border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.06); margin-bottom:12px; }
+.card-title { background:#f0f4ff; padding:10px 16px; font-size:13px; font-weight:600; color:#3b1c6e; border-bottom:1px solid #e0e7ff; }
+.form-row { padding:10px 16px; border-bottom:1px solid #f5f5f5; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.form-row label { font-size:13px; color:#444; min-width:150px; flex-shrink:0; }
+.form-row input,.form-row select { padding:8px 12px; border:1px solid #e0e0e0; border-radius:8px; font-size:13px; flex:1; min-width:80px; max-width:200px; background:#fff8e1; line-height:44px; height:44px; }
+.form-row input:focus,.form-row select:focus { outline:none; border-color:#3b82f6; }
+.form-row .unit { font-size:12px; color:#888; }
+.yesno { display:flex; gap:8px; }
+.yesno span { padding:4px 16px; border-radius:16px; font-size:13px; cursor:pointer; border:1px solid #ddd; color:#666; }
+.yesno span.sel-yes { background:linear-gradient(135deg,#1a0a2e,#3b1c6e); color:white; border-color:#3b82f6; }
+.yesno span.sel-no { background:#e8ecf1; color:#999; border-color:#ddd; }
+.fixed-bottom { position:sticky; bottom:0; background:white; padding:12px 16px; display:flex; gap:10px; box-shadow:0 -2px 8px rgba(0,0,0,0.06); z-index:10; }
+.fixed-bottom button { flex:1; padding:12px; border-radius:10px; font-size:14px; font-weight:600; border:none; cursor:pointer; }
+.btn-primary { background:linear-gradient(135deg,#1a0a2e,#3b1c6e); color:white; }
+.btn-primary:hover { opacity:0.9; }
+.btn-secondary { background:#e8ecf1; color:#555; }
+
+.score-card { background:linear-gradient(135deg,#1a0a2e,#3b1c6e); color:white; border-radius:16px; padding:28px 20px; text-align:center; margin-bottom:16px; }
+.score-card .label { font-size:13px; opacity:0.85; }
+.score-card .score { font-size:40px; font-weight:800; margin:6px 0; }
+.score-card .grade { font-size:16px; font-weight:600; margin-bottom:4px; }
+.score-card .suggestion { font-size:13px; opacity:0.9; line-height:1.6; }
+.result-summary { background:linear-gradient(135deg,#1a0a2e,#3b1c6e); color:white; border-radius:16px; padding:28px 20px; text-align:center; margin-bottom:16px; }
+.result-summary .row { display:flex; justify-content:space-around; margin-top:12px; flex-wrap:wrap; gap:8px; }
+.result-summary .item { flex:1; min-width:100px; }
+.result-summary .item .label { font-size:11px; opacity:0.85; }
+.result-summary .item .val { font-size:22px; font-weight:800; margin:4px 0; }
+.result-summary .item .sub { font-size:12px; opacity:0.85; }
+
+.dim-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px; }
+.dim-card { background:white; border-radius:12px; padding:16px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+.dim-card .name { font-size:12px; color:#888; margin-bottom:4px; }
+.dim-card .dscore { font-size:20px; font-weight:700; }
+.dim-card .dstatus { font-size:11px; margin-top:4px; padding:2px 10px; border-radius:10px; display:inline-block; }
+.low { background:#e6f7e6; color:#16a34a; }
+.mid { background:#fef9e7; color:#d97706; }
+.high { background:#feeaea; color:#dc2626; }
+.pass { background:#e6f7e6; color:#16a34a; }
+.warn { background:#fef9e7; color:#d97706; }
+.danger { background:#feeaea; color:#dc2626; }
+.fail { background:#feeaea; color:#dc2626; }
+.caution { background:#fef9e7; color:#d97706; }
+.rate-green { background:#e6f7e6; color:#16a34a; }
+.rate-yellow { background:#fef9e7; color:#d97706; }
+.rate-red { background:#feeaea; color:#dc2626; }
+
+.help-card { background:white; border-radius:12px; padding:20px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+.help-card h3 { font-size:15px; margin-bottom:8px; color:#3b1c6e; }
+.help-card p,.help-card li { font-size:13px; color:#555; line-height:1.8; }
+.check-list { list-style:none; padding:0; }
+.check-list li { padding:6px 0; font-size:13px; color:#444; border-bottom:1px solid #f5f5f5; display:flex; align-items:center; gap:8px; }
+.check-list li:last-child { border-bottom:none; }
+.detail-item { padding:12px 16px; border-bottom:1px solid #f5f5f5; display:flex; justify-content:space-between; align-items:center; }
+.detail-item:last-child { border-bottom:none; }
+.detail-item .dlabel { font-size:13px; color:#555; }
+.detail-item .dval { font-size:14px; font-weight:600; }
+.detail-item .dval.pass { color:#16a34a; }
+.detail-item .dval.warn { color:#d97706; }
+.detail-item .dval.danger { color:#dc2626; }
+.result-card { background:white; border-radius:12px; padding:16px; margin-bottom:8px; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+.result-card h3 { font-size:14px; color:#3b1c6e; margin-bottom:8px; }
+.result-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #f5f5f5; font-size:13px; }
+.result-row:last-child { border-bottom:none; }
+.result-row .label { color:#555; }
+.result-row .val { font-weight:600; }
+.result-row.total { border-top:2px solid #3b1c6e; padding-top:8px; margin-top:4px; font-weight:700; }
+.result-row.total .val { color:#3b1c6e; font-size:16px; }
+.result-green { color:#16a34a; }
+.result-red { color:#dc2626; }
+.result-orange { color:#d97706; }
+
+.member-banner { background:linear-gradient(135deg,#0f0c29,#302b63,#24243e); border-radius:12px; padding:20px; text-align:center; margin-top:16px; }
+.member-banner h3 { font-size:15px; color:white; margin-bottom:6px; }
+.member-banner p { font-size:12px; color:rgba(255,255,255,0.85); line-height:1.6; }
+.member-banner .btn { display:inline-block; background:white; color:#3b1c6e; padding:8px 24px; border-radius:20px; text-decoration:none; font-size:13px; font-weight:600; margin-top:8px; }
+
+.contact { background:#eef2ff; border-radius:8px; padding:12px; }
+.contact strong { font-size:14px; color:#3b1c6e; }
+.scenario-grid { display:flex; gap:8px; }
+.scenario-btn { flex:1; padding:10px; border-radius:8px; font-size:13px; font-weight:600; border:2px solid #ddd; background:white; color:#888; cursor:pointer; text-align:center; transition:all .2s; }
+.scenario-btn.active { border-color:#3b82f6; color:#3b1c6e; background:#eef2ff; }
+.chart-area { background:white; border-radius:16px; padding:20px; box-shadow:0 2px 12px rgba(0,0,0,0.06); margin-bottom:16px; text-align:center; }
+.chart-area canvas { max-width:100%; height:auto; }
+.form-row input[type=range] { flex:1; min-width:120px; max-width:250px; accent-color:#3b82f6; }
+.form-row .val { font-size:14px; font-weight:700; color:#3b1c6e; min-width:30px; text-align:right; }
+.form-row .hint { font-size:11px; color:#999; }
+.dim-card .bar-bg { position:absolute; bottom:0; left:0; height:4px; background:#e8ecf1; width:100%; }
+.dim-card .bar-fill { position:absolute; bottom:0; left:0; height:4px; transition:width .5s; }
+
+@media (max-width:480px){.dim-grid{grid-template-columns:1fr 1fr}.result-summary .row{flex-direction:column;gap:4px}}
+
+
+/* ===== 打印/PDF样式 ===== */
+@media print {
+  body { background:white !important; padding:0 !important; margin:0 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .fixed-bottom, .no-print, .marketing, [class*="返回"], footer, .footer, #返回, .return-bar, .bottom-bar { display:none !important; }
+  .header { background:linear-gradient(135deg,#0c1445,#1a3a6b) !important; color:white !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; padding:20px 16px !important; }
+  .card, .dim-card, .check-item, .result-card { break-inside:avoid; page-break-inside:avoid; border:1px solid #ddd !important; box-shadow:none !important; }
+  .score-card, .result-summary { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .tabs { display:none !important; }
+  .panel { display:block !important; padding:10px !important; }
+  .dim-grid { display:grid !important; grid-template-columns:1fr 1fr !important; gap:8px !important; }
+  .form-row { padding:6px 10px !important; }
+  a[href]:after { content:none !important; }
+}
+
+.pdf-btn { background:linear-gradient(135deg,#b8860b,#d4a843) !important; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🤝 并购重组税务模拟评估</h1>
+  <p>资产收购 vs 股权收购 · 税负对比 · 方案优选</p>
+  <div class="badge">您身边的财税专家 · 洪淳宇</div>
+</div>
+<div class="tabs">
+  <div class="tab active" data-tab="input" onclick="st('input')">📝 填数据</div>
+  <div class="tab" data-tab="report" onclick="st('report')">📊 评估报告</div>
+  <div class="tab" data-tab="help" onclick="st('help')">💡 说明</div>
+</div>
+
+<div class="panel active" id="panel-input">
+  <div class="card">
+    <div class="card-title">📋 交易基本信息</div>
+    <div class="form-row"><label>标的公司名称</label><input id="targetName" value="目标企业"></div>
+    <div class="form-row"><label>交易总对价（万元）</label><input id="dealPrice" type="number" value="5000"></div>
+    <div class="form-row"><label>标的净资产（万元）</label><input id="netAsset" type="number" value="3000"></div>
+    <div class="form-row"><label>标的公司累计未分配利润（万元）</label><input id="retainedEarn" type="number" value="1000"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏭 标的公司情况</div>
+    <div class="form-row"><label>是否有可弥补亏损（万元）</label><input id="lossCarry" type="number" value="200"></div>
+    <div class="form-row"><label>是否有不动产</label><div id="qProperty" class="yesno"><span onclick="yn(this,1)">是</span><span onclick="yn(this,0)" class="sel-no">否</span></div></div>
+    <div class="form-row"><label>已取得高新技术企业资格</label><div id="qHiTech" class="yesno"><span onclick="yn(this,1)">是</span><span onclick="yn(this,0)" class="sel-no">否</span></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">👤 出让方信息</div>
+    <div class="form-row"><label>出让方类型</label>
+      <select id="sellerType">
+        <option value="corp">法人股东</option>
+        <option value="nat">自然人股东</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="fixed-bottom">
+    <button class="btn-primary" onclick="calc()">🧮 开始模拟</button>
+    <button class="btn-secondary" onclick="resetAll()">🔄 重置</button>
+  </div>
+</div>
+
+<div class="panel" id="panel-report">
+  <div id="reportContent"></div>
+  <div class="fixed-bottom"><button class="btn-secondary" onclick="st('input')">📝 返回修改</button></div>
+</div>
+
+<div class="panel" id="panel-help">
+  <div class="help-card"><h3>📖 使用说明</h3><p>本工具对比资产收购与股权收购两种方式的综合税负，帮助企业选择最优的并购路径。</p></div>
+  <div class="help-card"><h3>📊 计算逻辑</h3><p>资产收购：出让方需缴企业所得税/个税+增值税（不动产部分）<br>股权收购：出让方需缴企业所得税/个税（股权转让所得）</p></div>
+  <div class="help-card"><h3>⚠️ 免责声明</h3><p>测算结果仅供参考，实际税负受交易结构设计、税收优惠、地方政策等多因素影响。</p></div>
+  <div class="member-banner"><h3>🥇 金级会员专属服务</h3><p>金级会员享并购重组税务尽调、投融资协议税务条款审阅等高端服务<br>电话：186-0129-4989</p><a class="btn" href="https://sparrow528.github.io/tax-membership/" target="_blank">了解会员方案 →</a></div>
+</div>
+
+<script>
+function yn(el,val){
+  var p=el.parentNode;
+  var ss=p.getElementsByTagName('span');
+  for(var i=0;i<ss.length;i++)ss[i].className='';
+  el.className=val===1?'sel-yes':'sel-no';
+  p.dataset.val=val;
+}
+function st(tab){
+  var ts=document.querySelectorAll('.tab');
+  var ps=document.querySelectorAll('.panel');
+  for(var i=0;i<ts.length;i++){
+    ts[i].className='tab'+(ts[i].dataset.tab===tab?' active':'');
+    ps[i].className='panel'+(ps[i].id==='panel-'+tab?' active':'');
+  }
+}
+function calc(){
+  var price=parseFloat(document.getElementById('dealPrice').value)||0;
+  var netA=parseFloat(document.getElementById('netAsset').value)||0;
+  var re=parseFloat(document.getElementById('retainedEarn').value)||0;
+  var loss=parseFloat(document.getElementById('lossCarry').value)||0;
+  var hasProp=document.getElementById('qProperty').dataset.val==1;
+  var isHiTech=document.getElementById('qHiTech').dataset.val==1;
+  var seller=document.getElementById('sellerType').value;
+
+  // 资产收购税负
+  var assetTax=0;
+  // 出让方税：转让对价-计税基础（净资产）
+  var assetGain=Math.max(0,price-netA);
+  if(seller==='corp'){
+    assetTax+=assetGain*0.25;
+  } else {
+    assetTax+=assetGain*0.2;
+  }
+  // 不动产增值税 5%
+  if(hasProp) assetTax+=price*0.05;
+
+  // 股权收购税负
+  var eqGain=Math.max(0,price-netA);
+  var eqTax=0;
+  if(seller==='corp'){
+    eqTax+=eqGain*0.25;
+    // 可弥补亏损抵扣
+    eqTax-=Math.min(loss,eqGain)*0.25;
+  } else {
+    eqTax+=eqGain*0.2;
+  }
+
+  assetTax=Math.max(0,Math.round(assetTax));
+  eqTax=Math.max(0,Math.round(eqTax));
+  var saving=assetTax-eqTax;
+  var recommend=eqTax<assetTax?'股权收购（税负更低）':'资产收购（可能更优）';
+
+  var html='<div class="result-card"><h3>📊 交易对价：'+price+'万元</h3></div>';
+  html+='<div class="compare-box">';
+  html+='<div class="cbox"><div class="title">📦 资产收购税负</div><div class="num'+(assetTax>eqTax?' danger':' good')+'">'+assetTax+'</div><div style="font-size:11px;color:#888">万元</div></div>';
+  html+='<div class="cbox'+(eqTax<assetTax?' recommend':'')+'"><div class="title">📄 股权收购税负</div><div class="num'+(eqTax<assetTax?' good':' warn')+'">'+eqTax+'</div><div style="font-size:11px;color:#888">万元</div></div>';
+  html+='</div>';
+
+  html+='<div class="result-card">';
+  html+='<h3>📋 税负明细对比</h3>';
+  html+='<div class="result-row"><span class="label">资产收购-出让方所得税</span><span class="val">'+Math.round(assetGain*0.25).toFixed(1)+'万元</span></div>';
+  if(hasProp) html+='<div class="result-row"><span class="label">资产收购-不动产增值税</span><span class="val">'+Math.round(price*0.05).toFixed(1)+'万元</span></div>';
+  html+='<div class="result-row total"><span class="label">资产收购合计税负</span><span class="val">'+assetTax+'万元</span></div>';
+  html+='<div class="result-row"><span class="label">股权收购-出让方所得税</span><span class="val">'+eqTax+'万元</span></div>';
+  if(loss>0) html+='<div class="result-row"><span class="label">股权收购-亏损抵扣</span><span class="val">-'+Math.round(Math.min(loss,eqGain)*0.25).toFixed(1)+'万元</span></div>';
+  html+='<div class="result-row total"><span class="label">股权收购合计税负</span><span class="val">'+eqTax+'万元</span></div>';
+  html+='</div>';
+
+  html+='<div class="result-card"><h3>💡 建议</h3><p style="font-size:13px;color:#555;line-height:1.8">';
+  if(saving>0){
+    html+='推荐选择<strong>'+recommend+'</strong>，可节税约<strong>'+Math.abs(saving)+'万元</strong>。';
+  } else if(saving===0){
+    html+='两种方案税负接近，建议结合非税务因素综合考量（如债务承担、员工安置等）。';
+  } else {
+    html+='本案例中资产收购税负更低。但还需考虑资产收购后折旧摊销抵扣等长期因素。';
+  }
+  if(isHiTech) html+='<br>⚠️ 标的为高新技术企业，股权收购可保留高新资格，享受15%优惠税率。';
+  html+='</p></div>';
+
+  html+='<div class="member-banner"><h3>🥇 金级会员专属服务</h3><p>金级会员享并购重组税务尽调、股权架构优化等高端服务<br>电话：186-0129-4989</p><a class="btn" href="https://sparrow528.github.io/tax-membership/" target="_blank">了解会员方案 →</a></div>';
+  document.getElementById('reportContent').innerHTML=html;
+  st('report');
+}
+function resetAll(){
+  document.getElementById('targetName').value='';
+  document.getElementById('dealPrice').value='';
+  document.getElementById('netAsset').value='';
+  document.getElementById('retainedEarn').value='';
+  document.getElementById('lossCarry').value='';
+  document.getElementById('sellerType').selectedIndex=0;
+  var yn=document.querySelectorAll('.yesno');
+  for(var i=0;i<yn.length;i++){
+    var ss=yn[i].getElementsByTagName('span');
+    for(var j=0;j<ss.length;j++)ss[j].className='';
+    var no=yn[i].querySelector('span:nth-child(2)');
+    if(no){no.className='sel-no';yn[i].dataset.val=0;}
+  }
+}
+
+function downloadPDF(){
+  window.print();
+}
+</script>
+</body>
+</html>
